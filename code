@@ -1,0 +1,62 @@
+#include <ESP32Servo.h>
+#include <BluetoothSerial.h>
+Servo myservo;
+BluetoothSerial SerialBT;
+int rledpin=14;
+int bledpin=13;
+int buzzpin=12;
+int numberoferrors=0;
+
+
+
+void setup() {
+  // put your setup code here, to run once:
+myservo.attach(18);
+SerialBT.begin("esp32bt");
+pinMode(rledpin, OUTPUT);
+pinMode(bledpin, OUTPUT);
+pinMode(buzzpin, OUTPUT);
+
+myservo.write(0);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+if(SerialBT.available()){
+  int password = SerialBT.parseInt();
+  if(password==0) return;
+
+  if(password==23890){
+    numberoferrors=0;
+    SerialBT.println("DOOR UNLOCKED");
+    myservo.write(90);  //door unlocked
+    digitalWrite(bledpin, HIGH);
+
+    delay(5000);
+    myservo.write(0);  //door locked
+    digitalWrite(bledpin, LOW);
+  }
+  else{
+    SerialBT.println("INCORRECT PASSWORD! TRY AGAIN.");
+    digitalWrite(rledpin, HIGH);
+    digitalWrite(buzzpin, HIGH);
+    delay(500);
+    digitalWrite(rledpin, LOW);
+    digitalWrite(buzzpin, LOW);
+
+    numberoferrors++;
+
+  }
+  if(numberoferrors>=4){
+    SerialBT.println("INTRUDER ALERT!");
+    digitalWrite(rledpin,HIGH);
+    digitalWrite(buzzpin, HIGH);
+    delay(20000);
+    digitalWrite(rledpin, LOW);
+    digitalWrite(buzzpin, LOW);
+
+
+  }
+
+}
+}
