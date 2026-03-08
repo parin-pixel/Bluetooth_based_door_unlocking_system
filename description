@@ -1,0 +1,15 @@
+Description-
+A smart door locking system using ESP32 where a smartphone sends a Bluetooth command to unlock a door using a servo motor.
+
+Components-
+- ESP32
+- Servo motor
+- Power supply
+- Smartphone Bluetooth terminal
+
+Working-
+1. Phone sends command via Bluetooth
+2. ESP32 reads the serial command
+3. Servo rotates to unlock the door
+4. After delay it locks again
+
